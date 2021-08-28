@@ -1,0 +1,29 @@
+{
+    "name": "loghouse-io/loghouse-laravel",
+    "description": "",
+    "keywords": [
+        "loghouse-io",
+        "loghouse-laravel"
+    ],
+    "homepage": "https://github.com/loghouse-io/loghouse-laravel",
+    "license": "MIT",
+    "type": "library",
+    "authors": [
+        {
+            "name": "Loghouse.io",
+            "email": "support@loghouse.io"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "LoghouseIo\\LoghouseLaravel\\": "src"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "LoghouseIo\\LoghouseLaravel\\LoghouseLaravelServiceProvider"
+            ]
+        }
+    }
+}
