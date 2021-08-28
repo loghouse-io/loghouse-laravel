@@ -14,6 +14,9 @@
             "email": "support@loghouse.io"
         }
     ],
+    "require": {
+        "php": "^7.3|^8.0"
+    },
     "autoload": {
         "psr-4": {
             "LoghouseIo\\LoghouseLaravel\\": "src"
