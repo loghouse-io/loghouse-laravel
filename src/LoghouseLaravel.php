@@ -111,6 +111,11 @@ class LoghouseLaravel
         $this->entries[] = $entry;
     }
 
+    private function resetEntries()
+    {
+        $this->entries = [];
+    }
+
     public function send(): void
     {
         if (empty($this->accessToken) || count($this->entries) == 0) {
@@ -128,5 +133,7 @@ class LoghouseLaravel
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_exec($ch);
         curl_close($ch);
+
+        $this->resetEntries();
     }
 }
