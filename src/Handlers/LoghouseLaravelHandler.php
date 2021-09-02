@@ -26,7 +26,7 @@ class LoghouseLaravelHandler extends AbstractProcessingHandler
     /**
      * @param array $record
      */
-    protected function write(array $record): void
+    protected function write(array $record)
     {
         $metadata = [
             'log_level' => $record['level'],
