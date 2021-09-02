@@ -27,7 +27,7 @@ class LoghouseLaravel
     /**
      * LoghouseLaravel constructor.
      */
-    public function __construct(?string $accessToken = null, ?string $defaultBucketId = null)
+    public function __construct(string $accessToken = null, string $defaultBucketId = null)
     {
         $this->accessToken = $accessToken;
         $this->defaultBucketId = $defaultBucketId;
@@ -39,10 +39,10 @@ class LoghouseLaravel
      * @param string|null $bucketId
      */
     public function log(
-        ?string $message = null,
-        ?array $metadata = [],
-        ?string $bucketId = null): void
-    {
+        string $message = null,
+        array $metadata = [],
+        string $bucketId = null
+    ) {
         if (empty($this->accessToken)) {
             return;
         }
@@ -69,11 +69,10 @@ class LoghouseLaravel
      * @throws LoghouseLaravelEntryValidateException
      */
     private function entryValidate(
-        ?string $bucketId = null,
-        ?string $message = null,
-        ?array $metadata = []
-    ): void
-    {
+        string $bucketId = null,
+        string $message = null,
+        array $metadata = []
+    ) {
         if (empty($bucketId)) {
             throw new LoghouseLaravelEntryValidateException('Empty bucket_id');
         }
@@ -96,7 +95,7 @@ class LoghouseLaravel
         string $bucketId,
         string $message,
         array $metadata = []
-    ): void {
+    ) {
 
         $entry = [
             'bucket_id' => $bucketId,
@@ -116,7 +115,7 @@ class LoghouseLaravel
         $this->entries = [];
     }
 
-    public function send(): void
+    public function send()
     {
         if (empty($this->accessToken) || count($this->entries) == 0) {
             return;

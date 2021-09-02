@@ -14,7 +14,7 @@ class LoghouseLaravelServiceProvider extends ServiceProvider
     /**
      * Bootstrap the application services.
      */
-    public function boot(): void
+    public function boot()
     {
         $this->registerMiddleware();
     }
@@ -22,12 +22,12 @@ class LoghouseLaravelServiceProvider extends ServiceProvider
     /**
      * Register the application services.
      */
-    public function register(): void
+    public function register()
     {
         $this->registerService();
     }
 
-    private function registerMiddleware(): void
+    private function registerMiddleware()
     {
         $channelsConfig = app('config')['logging']['channels'];
 
@@ -40,7 +40,7 @@ class LoghouseLaravelServiceProvider extends ServiceProvider
         }
     }
 
-    private function registerService(): void
+    private function registerService()
     {
         $this->app->singleton('LoghouseLaravel', function () {
 
