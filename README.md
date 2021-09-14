@@ -1,4 +1,4 @@
-# Very short description of the package
+# Affordable and intuitive logging backend for your apps
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/loghouse-io/loghouse-laravel.svg?style=flat-square)](https://packagist.org/packages/loghouse-io/loghouse-laravel)
 [![Total Downloads](https://img.shields.io/packagist/dt/loghouse-io/loghouse-laravel.svg?style=flat-square)](https://packagist.org/packages/loghouse-io/loghouse-laravel)
