@@ -39,7 +39,17 @@ class LoghouseLaravelHandler extends AbstractProcessingHandler
         }
 
         if (!empty($record['context'])) {
-            $metadata = array_merge($record['context'], $metadata);
+
+            if (isset($record['context']['exception'])) {
+                $metadata['uncaught_exception'] = true;
+
+                $metadata['error'] = [
+                    'message' => $record['message'],
+                    'stacktrace' => $record['context']['exception']->getTrace()
+                ];
+            } else {
+                $metadata = array_merge($record['context'], $metadata);
+            }
         }
 
         LoghouseLaravel::log($record['message'], $metadata, $this->bucketId);
