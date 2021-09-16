@@ -16,8 +16,8 @@ composer require loghouse-io/loghouse-laravel
 ## Usage
 1. You need to add 2 parameters to the .env file
 ```
-LOGHOUSE_LARAVEL_ACCESS_TOKEN={LOGHOUSE_LARAVEL_ACCESS_TOKEN}
-LOGHOUSE_LARAVEL_DEFAULT_BUCKET_ID={LOGHOUSE_LARAVEL_DEFAULT_BUCKET_ID}
+LOGHOUSE_LARAVEL_ACCESS_TOKEN=${LOGHOUSE_LARAVEL_ACCESS_TOKEN}
+LOGHOUSE_LARAVEL_DEFAULT_BUCKET_ID=${LOGHOUSE_LARAVEL_DEFAULT_BUCKET_ID}
 ```
 
 2. Next, add a new log channel to logging.php
@@ -38,6 +38,22 @@ LOGHOUSE_LARAVEL_DEFAULT_BUCKET_ID={LOGHOUSE_LARAVEL_DEFAULT_BUCKET_ID}
             'channels' => [...,'loghouse'],
             ...
         ]
+```
+
+4. If you want to send logs to another bucket, for example, separate api, web and console logs, you must create a new channel in logging.php, and add bucket_id to the channel config
+```php
+'channels' => [
+        ...
+        'loghouse_api' => [
+            'driver' => 'custom',
+            'via' => \LoghouseIo\LoghouseLaravel\LoghouseLaravelFactory::class,
+            'bucket_id' => ${bucket_id}
+        ]
+```
+
+5. To use the new channel, paste the code into your project
+```php
+Log::channel('loghouse_api')->warning('Api log');
 ```
 
 ### Changelog
