@@ -3,6 +3,7 @@
 namespace LoghouseIo\LoghouseLaravel;
 
 use Closure;
+use Illuminate\Support\Facades\Response;
 use LoghouseIo\LoghouseLaravel\Facades\LoghouseLaravel;
 
 /**
@@ -26,10 +27,13 @@ class LoghouseLaravelMiddleware
     /**
      * Handle tasks after the response has been sent to the browser.
      *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Http\Response $response
+     *
      * @return void
      */
-    public function terminate()
+    public function terminate($request, $response)
     {
-        LoghouseLaravel::send();
+        LoghouseLaravel::send($response->getStatusCode());
     }
 }

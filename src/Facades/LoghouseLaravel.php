@@ -9,8 +9,8 @@ use Illuminate\Support\Facades\Facade;
  * Class LoghouseLaravel
  * @package LoghouseIo\LoghouseLaravel\Facades
  *
- * @method static void log(string $message, array $metadata, ?string $bucketId)
- * @method static void send()
+ * @method static void log(string $message, array $metadata = [], string $bucketId = null)
+ * @method static void send(int $httpStatusCode = 200)
  */
 class LoghouseLaravel extends Facade
 {

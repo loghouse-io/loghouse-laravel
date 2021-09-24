@@ -2,137 +2,101 @@
 
 namespace LoghouseIo\LoghouseLaravel;
 
-use DateTime;
-use LoghouseIo\LoghouseLaravel\Exception\LoghouseLaravelEntryValidateException;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use LoghouseIo\LoghouseLaravel\Factories\LoghouseLaravelEntryFactory;
+use LoghouseIo\LoghouseLaravel\Models\LoghouseLaravelConfig;
+use LoghouseIo\LoghouseLaravel\Models\LoghouseLaravelEntriesStorage;
+use LoghouseIo\LoghouseLaravel\Utils\LoghouseLaravelHttpClient;
 
+/**
+ * Class LoghouseLaravel
+ * @package LoghouseIo\LoghouseLaravel
+ */
 class LoghouseLaravel
 {
-    const URL = 'https://api.loghouse.io/log';
+    /**
+     * @var LoghouseLaravelConfig
+     */
+    private $config;
 
     /**
-     * @var ?string
+     * @var LoghouseLaravelEntriesStorage
      */
-    private $accessToken;
-
-    /**
-     * @var ?string
-     */
-    private $defaultBucketId;
-
-    /**
-     * @var array
-     */
-    private $entries = [];
+    private $entriesStorage;
 
     /**
      * LoghouseLaravel constructor.
+     * @param LoghouseLaravelConfig $config
+     * @param LoghouseLaravelEntriesStorage $entriesStorage
      */
-    public function __construct(string $accessToken = null, string $defaultBucketId = null)
-    {
-        $this->accessToken = $accessToken;
-        $this->defaultBucketId = $defaultBucketId;
+    public function __construct(
+        LoghouseLaravelConfig $config,
+        LoghouseLaravelEntriesStorage $entriesStorage
+    ) {
+        $this->config = $config;
+        $this->entriesStorage = $entriesStorage;
     }
 
     /**
-     * @param string|null $message
-     * @param array|null $metadata
+     * @param string $message
+     * @param array $metadata
      * @param string|null $bucketId
      */
     public function log(
-        string $message = null,
+        string $message,
         array $metadata = [],
         string $bucketId = null
     ) {
-        if (empty($this->accessToken)) {
+        if (!$this->config->hasAccessToken()) {
             return;
         }
 
-        $bucketId = $bucketId ?? $this->defaultBucketId;
+        $bucketId = $bucketId ?? $this->config->getDefaultBucketId();
 
-        try {
-            $this->entryValidate($bucketId, $message, $metadata);
-        } catch (LoghouseLaravelEntryValidateException $e) {
+        if (!$this->validate($bucketId, $message)) {
             return;
         }
 
-        $this->addEntry($bucketId, $message, $metadata);
+        $entry = LoghouseLaravelEntryFactory::create($bucketId, $message, $metadata);
 
-        if (app()->runningInConsole()) {
+        $this->entriesStorage->addEntry($entry);
+
+        if ($this->config->isConsole()) {
             $this->send();
+        }
+
+        if ($entry->isUncaughtException()) {
+            $this->send(500);
         }
     }
 
     /**
      * @param string|null $bucketId
      * @param string|null $message
-     * @param array|null $metadata
-     * @throws LoghouseLaravelEntryValidateException
+     * @return bool
      */
-    private function entryValidate(
+    private function validate(
         string $bucketId = null,
-        string $message = null,
-        array $metadata = []
-    ) {
-        if (empty($bucketId)) {
-            throw new LoghouseLaravelEntryValidateException('Empty bucket_id');
-        }
-
-        if (empty($message)) {
-            throw new LoghouseLaravelEntryValidateException('Empty message');
-        }
-
-        if (!is_array($metadata)) {
-            throw new LoghouseLaravelEntryValidateException('Metadata is not array');
-        }
+        string $message = null
+    ): bool {
+        return !empty($bucketId) && !empty($message);
     }
 
     /**
-     * @param string $bucketId
-     * @param string $message
-     * @param array $metadata
+     * @param int $httpStatusCode
      */
-    private function addEntry(
-        string $bucketId,
-        string $message,
-        array $metadata = []
-    ) {
-
-        $entry = [
-            'bucket_id' => $bucketId,
-            'message' => $message,
-            'timestamp' => (new DateTime())->format('c')
-        ];
-
-        if (!empty($metadata)) {
-            $entry['metadata'] = $metadata;
-        }
-
-        $this->entries[] = $entry;
-    }
-
-    private function resetEntries()
+    public function send(int $httpStatusCode = 200)
     {
-        $this->entries = [];
-    }
-
-    public function send()
-    {
-        if (empty($this->accessToken) || count($this->entries) == 0) {
+        if (!$this->config->hasAccessToken() || !$this->entriesStorage->hasEntries()) {
             return;
         }
 
-        $ch = curl_init(self::URL);
+        LoghouseLaravelHttpClient::send(
+            $this->config->getAccessToken(),
+            $this->entriesStorage->serialize($httpStatusCode)
+        );
 
-        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode([
-            'access_token' => $this->accessToken,
-            'entries' => $this->entries
-        ]));
-
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type:application/json'));
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_exec($ch);
-        curl_close($ch);
-
-        $this->resetEntries();
+        $this->entriesStorage->reset();
     }
 }
