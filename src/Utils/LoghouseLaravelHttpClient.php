@@ -8,7 +8,7 @@ namespace LoghouseIo\LoghouseLaravel\Utils;
  */
 class LoghouseLaravelHttpClient
 {
-    private const URL = 'https://api.loghouse.io/log';
+    const URL = 'https://api.loghouse.io/log';
 
     /**
      * @param string $accessToken

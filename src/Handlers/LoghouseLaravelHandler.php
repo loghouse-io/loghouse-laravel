@@ -28,7 +28,7 @@ class LoghouseLaravelHandler extends AbstractProcessingHandler
     /**
      * @param array $record
      */
-    protected function write(array $record): void
+    protected function write(array $record)
     {
         $metadata = [
             'level' => strtolower($record['level_name'])
@@ -41,7 +41,7 @@ class LoghouseLaravelHandler extends AbstractProcessingHandler
 
                 $metadata['error'] = [
                     'caught' => false,
-                    'message' => $record['message'],
+                    'message' => $context['exception']->getMessage(),
                     'stacktrace' => $context['exception']->getTraceAsString()
                 ];
 
@@ -52,8 +52,8 @@ class LoghouseLaravelHandler extends AbstractProcessingHandler
 
                     $metadata['error'] = [
                         'caught' => true,
-                        'message' => $record['message'],
-                        'stacktrace' => $context['exception']->getTraceAsString()
+                        'message' => $context['error']->getMessage(),
+                        'stacktrace' => $context['error']->getTraceAsString()
                     ];
 
                 } elseif (is_string($context['error'])) {

@@ -63,7 +63,7 @@ class LoghouseLaravelRequestEntryImpl implements LoghouseLaravelRequestEntry
     /**
      * @return int|null
      */
-    public function getUserId(): ?int
+    public function getUserId()
     {
         return $this->metadata['user_id'];
     }
@@ -71,7 +71,7 @@ class LoghouseLaravelRequestEntryImpl implements LoghouseLaravelRequestEntry
     /**
      * @param int $httpStatusCode
      */
-    public function setStatusCode(int $httpStatusCode): void
+    public function setStatusCode(int $httpStatusCode)
     {
         $this->httpStatusCode = $httpStatusCode;
         $this->metadata['response']['code'] = $httpStatusCode;

@@ -58,7 +58,7 @@ class LoghouseLaravelEntryImpl implements LoghouseLaravelEntry
     /**
      * @param int|null $userId
      */
-    public function setUserId(int $userId = null): void
+    public function setUserId(int $userId = null)
     {
         $this->metadata['user_id'] = $userId;
     }
@@ -66,7 +66,7 @@ class LoghouseLaravelEntryImpl implements LoghouseLaravelEntry
     /**
      * @param string $ip
      */
-    public function setIp(string $ip): void
+    public function setIp(string $ip)
     {
         $this->metadata['ip'] = $ip;
     }
@@ -74,7 +74,7 @@ class LoghouseLaravelEntryImpl implements LoghouseLaravelEntry
     /**
      * @param string $requestId
      */
-    public function setRequestId(string $requestId): void
+    public function setRequestId(string $requestId)
     {
         $this->metadata['request_id'] = $requestId;
     }

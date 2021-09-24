@@ -21,12 +21,12 @@ interface LoghouseLaravelRequestEntry
     /**
      * @return int|null
      */
-    public function getUserId(): ?int;
+    public function getUserId();
 
     /**
      * @param int $httpStatusCode
      */
-    public function setStatusCode(int $httpStatusCode): void;
+    public function setStatusCode(int $httpStatusCode);
 
     /**
      * @return array

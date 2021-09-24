@@ -41,7 +41,7 @@ class LoghouseLaravelEntriesStorageImpl implements LoghouseLaravelEntriesStorage
     /**
      * @param LoghouseLaravelEntry $entry
      */
-    public function addEntry(LoghouseLaravelEntry $entry): void
+    public function addEntry(LoghouseLaravelEntry $entry)
     {
         if (!$this->isConsole) {
             $entry->setUserId($this->requestEntry->getUserId());
@@ -66,7 +66,7 @@ class LoghouseLaravelEntriesStorageImpl implements LoghouseLaravelEntriesStorage
         return false;
     }
 
-    public function reset(): void
+    public function reset()
     {
         $this->entries = [];
     }

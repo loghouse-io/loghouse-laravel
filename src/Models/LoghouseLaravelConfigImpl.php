@@ -51,7 +51,7 @@ class LoghouseLaravelConfigImpl implements LoghouseLaravelConfig
     /**
      * @return string|null
      */
-    public function getAccessToken(): ?string
+    public function getAccessToken()
     {
         return $this->accessToken;
     }
@@ -67,7 +67,7 @@ class LoghouseLaravelConfigImpl implements LoghouseLaravelConfig
     /**
      * @return string|null
      */
-    public function getDefaultBucketId(): ?string
+    public function getDefaultBucketId()
     {
         return $this->defaultBucketId;
     }

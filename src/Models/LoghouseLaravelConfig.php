@@ -11,7 +11,7 @@ interface LoghouseLaravelConfig
     /**
      * @return string|null
      */
-    public function getAccessToken(): ?string;
+    public function getAccessToken();
 
     /**
      * @return bool
@@ -21,7 +21,7 @@ interface LoghouseLaravelConfig
     /**
      * @return string|null
      */
-    public function getDefaultBucketId(): ?string;
+    public function getDefaultBucketId();
 
     /**
      * @return bool

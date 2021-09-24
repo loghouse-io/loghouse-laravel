@@ -16,17 +16,17 @@ interface LoghouseLaravelEntry
     /**
      * @param int|null $userId
      */
-    public function setUserId(int $userId = null): void;
+    public function setUserId(int $userId = null);
 
     /**
      * @param string $ip
      */
-    public function setIp(string $ip): void;
+    public function setIp(string $ip);
 
     /**
      * @param string $requestId
      */
-    public function setRequestId(string $requestId): void;
+    public function setRequestId(string $requestId);
 
     /**
      * @return bool

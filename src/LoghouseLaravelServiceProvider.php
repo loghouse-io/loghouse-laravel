@@ -7,7 +7,6 @@ use Illuminate\Support\ServiceProvider;
 use LoghouseIo\LoghouseLaravel\Models\LoghouseLaravelConfigImpl;
 use LoghouseIo\LoghouseLaravel\Models\LoghouseLaravelEntriesStorageRequestConfigImpl;
 use LoghouseIo\LoghouseLaravel\Models\LoghouseLaravelEntriesStorageImpl;
-use LoghouseIo\LoghouseLaravel\Utils\LoghouseLaravelUtils;
 use LoghouseIo\LoghouseLaravel\Factories\LoghouseLaravelEntryFactory;
 use Illuminate\Support\Facades\Auth;
 
@@ -35,25 +34,8 @@ class LoghouseLaravelServiceProvider extends ServiceProvider
 
     private function registerMiddleware()
     {
-        if ($this->checkChannelAdded()) {
-            $this->registerGroupMiddleware('api');
-            $this->registerGroupMiddleware('web');
-        }
-    }
-
-    private function checkChannelAdded()
-    {
-        $appConfig = app('config');
-
-        if (isset($appConfig['logging']) && isset($appConfig['logging']['channels'])) {
-            foreach ($appConfig['logging']['channels'] as $channelConfig) {
-                if (isset($channelConfig['via']) && strpos($channelConfig['via'], 'LoghouseLaravelFactory') !== false) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
+        $this->registerGroupMiddleware('api');
+        $this->registerGroupMiddleware('web');
     }
 
     private function registerGroupMiddleware(string $group)

@@ -12,7 +12,7 @@ interface LoghouseLaravelEntriesStorage
     /**
      * @param LoghouseLaravelEntry $entry
      */
-    public function addEntry(LoghouseLaravelEntry $entry): void;
+    public function addEntry(LoghouseLaravelEntry $entry);
 
     /**
      * @return bool
@@ -25,5 +25,5 @@ interface LoghouseLaravelEntriesStorage
      */
     public function serialize(int $httpStatusCode = 200): array;
     
-    public function reset(): void;
+    public function reset();
 }
