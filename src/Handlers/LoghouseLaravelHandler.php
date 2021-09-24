@@ -4,8 +4,6 @@ namespace LoghouseIo\LoghouseLaravel\Handlers;
 
 use LoghouseIo\LoghouseLaravel\Facades\LoghouseLaravel;
 use Monolog\Handler\AbstractProcessingHandler;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 /**
  * Class LoghouseLaravelHandler
@@ -18,6 +16,10 @@ class LoghouseLaravelHandler extends AbstractProcessingHandler
      */
     private $bucketId;
 
+    /**
+     * LoghouseLaravelHandler constructor.
+     * @param string|null $bucketId
+     */
     public function __construct(string $bucketId = null)
     {
         $this->bucketId = $bucketId;
@@ -26,32 +28,47 @@ class LoghouseLaravelHandler extends AbstractProcessingHandler
     /**
      * @param array $record
      */
-    protected function write(array $record)
+    protected function write(array $record): void
     {
         $metadata = [
-            'log_level' => $record['level'],
-            'log_level_name' => $record['level_name']
+            'level' => strtolower($record['level_name'])
         ];
 
-        if (!app()->runningInConsole()) {
-            $metadata['user_id'] = Auth::check() ? Auth::user()->id : null;
-            $metadata['ip'] = request()->ip();
-        }
+        $context = $record['context'];
 
-        if (!empty($record['context'])) {
-
-            if (isset($record['context']['exception'])) {
-                $metadata['uncaught_exception'] = true;
+        if (!empty($context)) {
+            if (isset($context['exception'])) {
 
                 $metadata['error'] = [
-                    'message' => $record['message'],
-                    'stacktrace' => $record['context']['exception']->getTrace()
+                    'caught' => false,
+                    'message' => $context['exception']->getMessage(),
+                    'stacktrace' => $context['exception']->getTraceAsString()
                 ];
-            } else {
-                $metadata = array_merge($record['context'], $metadata);
+
+                unset($context['exception']);
+
+            } elseif (isset($context['error'])) {
+                if ($context['error'] instanceof \Throwable) {
+
+                    $metadata['error'] = [
+                        'caught' => true,
+                        'message' => $context['error']->getMessage(),
+                        'stacktrace' => $context['error']->getTraceAsString()
+                    ];
+
+                } elseif (is_string($context['error'])) {
+
+                    $metadata['error'] = [
+                        'caught' => null,
+                        'message' => $context['error']
+                    ];
+                }
+
+                unset($context['error']);
             }
         }
 
+        $metadata = array_merge($context, $metadata);
         LoghouseLaravel::log($record['message'], $metadata, $this->bucketId);
     }
 }
