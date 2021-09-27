@@ -48,10 +48,14 @@ class LoghouseLaravelServiceProvider extends ServiceProvider
         $this->app->singleton('LoghouseLaravel', function () {
 
             $isConsole = app()->runningInConsole();
-            $request = LoghouseLaravelEntryFactory::createRequest(
-                \request(),
-                Auth::check() ? Auth::user()->id : null
-            );
+
+            $requestEntry = null;
+            if (!$isConsole) {
+                $requestEntry = LoghouseLaravelEntryFactory::createRequest(
+                    \request(),
+                    Auth::check() ? Auth::user()->id : null
+                );
+            }
 
             return new LoghouseLaravel(
                 new LoghouseLaravelConfigImpl(
@@ -61,7 +65,7 @@ class LoghouseLaravelServiceProvider extends ServiceProvider
                 ),
                 new LoghouseLaravelEntriesStorageImpl(
                     $isConsole,
-                    $request
+                    $requestEntry
                 )
             );
         });

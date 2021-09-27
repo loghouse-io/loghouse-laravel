@@ -18,7 +18,7 @@ class LoghouseLaravelEntriesStorageImpl implements LoghouseLaravelEntriesStorage
     private $isConsole;
 
     /**
-     * @var LoghouseLaravelRequestEntry
+     * @var LoghouseLaravelRequestEntry|null
      */
     private $requestEntry;
 
@@ -32,7 +32,7 @@ class LoghouseLaravelEntriesStorageImpl implements LoghouseLaravelEntriesStorage
      */
     public function __construct(
         bool $isConsole,
-        LoghouseLaravelRequestEntry $requestEntry
+        LoghouseLaravelRequestEntry $requestEntry = null
     ) {
         $this->isConsole = $isConsole;
         $this->requestEntry = $requestEntry;
@@ -41,9 +41,9 @@ class LoghouseLaravelEntriesStorageImpl implements LoghouseLaravelEntriesStorage
     /**
      * @param LoghouseLaravelEntry $entry
      */
-    public function addEntry(LoghouseLaravelEntry $entry)
+    public function addEntry(LoghouseLaravelEntry $entry): void
     {
-        if (!$this->isConsole) {
+        if ($this->canUseRequestEntry()) {
             $entry->setUserId($this->requestEntry->getUserId());
             $entry->setIp($this->requestEntry->getIp());
             $entry->setRequestId($this->requestEntry->getRequestId());
@@ -66,7 +66,7 @@ class LoghouseLaravelEntriesStorageImpl implements LoghouseLaravelEntriesStorage
         return false;
     }
 
-    public function reset()
+    public function reset(): void
     {
         $this->entries = [];
     }
@@ -78,7 +78,7 @@ class LoghouseLaravelEntriesStorageImpl implements LoghouseLaravelEntriesStorage
         }
 
         $requestEntrySerialize = null;
-        if (!$this->isConsole) {
+        if ($this->canUseRequestEntry()) {
             $this->requestEntry->setStatusCode($httpStatusCode);
             $requestEntrySerialize = $this->requestEntry->serialize();
         }
@@ -86,7 +86,7 @@ class LoghouseLaravelEntriesStorageImpl implements LoghouseLaravelEntriesStorage
         $serializeEntries = [];
 
         foreach ($this->entries as $bucketId => $bucketEntries) {
-            if (!$this->isConsole) {
+            if ($this->canUseRequestEntry()) {
                 $requestEntrySerialize['bucket_id'] = $bucketId;
                 $serializeEntries[] = $requestEntrySerialize;
             }
@@ -97,5 +97,10 @@ class LoghouseLaravelEntriesStorageImpl implements LoghouseLaravelEntriesStorage
         }
 
         return $serializeEntries;
+    }
+
+    private function canUseRequestEntry()
+    {
+        return !$this->isConsole && $this->requestEntry;
     }
 }
