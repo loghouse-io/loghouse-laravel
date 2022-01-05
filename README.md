@@ -1,9 +1,11 @@
-# Affordable and intuitive logging backend for your apps
+# Affordable and intuitive logging backend for your Laravel apps
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/loghouse-io/loghouse-laravel.svg?style=flat-square)](https://packagist.org/packages/loghouse-io/loghouse-laravel)
 [![Total Downloads](https://img.shields.io/packagist/dt/loghouse-io/loghouse-laravel.svg?style=flat-square)](https://packagist.org/packages/loghouse-io/loghouse-laravel)
 
 LogHouse is a logging management system that allows you to store hundreds of gigabytes of logs with almost no configuration and with blazing fast ingestion and querying speed.
+
+This library provides integration for Laravel framework.
 
 ## Installation
 

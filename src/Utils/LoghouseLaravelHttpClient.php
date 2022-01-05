@@ -16,12 +16,9 @@ class LoghouseLaravelHttpClient
      */
     public static function send(string $accessToken, array $entries)
     {
-        $ch = curl_init(self::URL);
+        $ch = curl_init(self::URL.'?access_token='.$accessToken);
 
-        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode([
-            'access_token' => $accessToken,
-            'entries' => $entries
-        ]));
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($entries));
 
         curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type:application/json'));
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
